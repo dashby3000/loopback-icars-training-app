@@ -94,7 +94,7 @@
         "options": {
             "idInjection": false,
             "oracle": {
-                "schema": "BLACKPOOL",
+                "schema": "DEMO",
                 "table": "LOCATION"
             }
         },
@@ -166,7 +166,7 @@
     "car": {
         "options": {
             "oracle": {
-                "schema": "BLACKPOOL",
+                "schema": "DEMO",
                 "table": "PRODUCT"
             },
             "relations": {
@@ -188,7 +188,7 @@
             "year": {
                 "type": "number"
             },
-            " make": {
+            "make": {
                 "type": "string"
             },
             "model": {
@@ -214,7 +214,7 @@
         "options": {
             "idInjection": false,
             "oracle": {
-                "schema": "BLACKPOOL",
+                "schema": "DEMO",
                 "table": "INVENTORY"
             },
             "plural": "inventory"
@@ -287,7 +287,7 @@
         "options": {
             "idInjection": false,
             "oracle": {
-                "schema": "BLACKPOOL",
+                "schema": "DEMO",
                 "table": "CUSTOMER"
             },
             "extend": "User",

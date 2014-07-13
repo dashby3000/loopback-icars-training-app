@@ -1,0 +1,491 @@
+<html>
+
+<head>
+    <title>DEMO: Strong-Agent Metric API</title>
+
+    <link href='//fonts.googleapis.com/css?family=Ubuntu:300,400,500,700' rel='stylesheet prefetch' title='fonts' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="./css/morris-0.5.1.css">
+    <link rel="stylesheet" type="text/css" href="./css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="./css/bootstrap-responsive.min.css">
+    <link rel="stylesheet" type="text/css" href="./css/stylesheet.css" />
+
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script src="./js/jquery-1.9.1.min.js"></script>
+    <script src="./js/raphael-2.1.0.min.js"></script>
+    <script src="./js/morris-0.5.1.min.js"></script>
+</head>
+
+<body>
+    <div id="content">
+        <div class="container" id="container">
+            <p class="demoTitle">DEMO: Strong-Agent's Metric API</p>
+            <hr>
+            <div class="row-fluid">
+                <div class="span12" id="main-content">
+                    <div id="dashboard-view-main">
+
+                        <div class="row-fluid">
+                            <div class="span3" id="dashboard-filters-container">
+                                <div id="dashboard-filters">
+                                    <div id="graph-chooser-container">
+                                        <div class="tiers-graph-control">
+                                            <label>
+                                                <strong>Average Response Time By Tier</strong>
+                                            </label>
+                                            <div id="times-popover">
+                                                <p>Average response time for
+                                                    <strong>http</strong>&nbsp;and other systems such as databases being used
+                                                    <ul>
+                                                        <li>tiers.http.average</li>
+                                                    </ul>
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="cpu-graph-control">
+                                            <label>
+                                                <strong>CPU Usage</strong>
+                                            </label>
+                                            <p>Percentage of
+                                                <strong>CPU</strong>&nbsp;consumed by each process.
+                                                <ul>
+                                                    <li>cpu.total</li>
+                                                    <li>cpu.user</li>
+                                                    <li>cpu.system</li>
+                                                </ul>
+                                            </p>
+                                        </div>
+                                        <hr>
+                                        <div class="mem-graph-control">
+                                            <label>
+                                                <strong>Heap Size</strong>
+                                            </label>
+                                            <p>Current
+                                                <strong>heap</strong>, resident set size (
+                                                <strong>RSS</strong>), and a sampling of heap size,
+                                                <strong>V8 Full GC</strong>, immdiately after a full garbage collection.
+                                                <ul>
+                                                    <li>gc.heap.used</li>
+                                                    <li>heap.total</li>
+                                                    <li>heap.used</li>
+                                                </ul>
+                                            </p>
+                                        </div>
+                                        <hr>
+                                        <div class="conn-graph-control">
+                                            <label>
+                                                <strong>Concurrent Connections</strong>
+                                            </label>
+                                            <p>Sampling of
+                                                <strong>concurrent connections</strong>&nbsp;at any given point as well as an average throughput.
+                                                <ul>
+                                                    <li>http.connections</li>
+                                                </ul>
+                                            </p>
+                                        </div>
+                                        <hr>
+                                        <div class="eventloop-graph-control">
+                                            <label>
+                                                <strong>Event Loop</strong>
+                                            </label>
+                                            <p>
+                                                <strong>Event loop</strong>&nbsp;cycle times.
+                                                <ul>
+                                                    <li>loop.count</li>
+                                                    <li>loop.minimum</li>
+                                                    <li>loop.maximum</li>
+                                                    <li>loop.average</li>
+                                                </ul>
+                                            </p>
+                                        </div>
+                                        <hr>
+                                        <div class="mq-graph-control">
+                                            <label>
+                                                <strong>Messages</strong>
+                                            </label>
+                                            <p>Strong
+                                                <strong>MQ</strong>&nbsp;messages sent and received.
+                                                <ul>
+                                                    <li>messages.in.count</li>
+                                                    <li>messages.out.count</li>
+                                                </ul>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="span9" id="charts-container">
+                                <p class="updateMetrics">
+                                    NEXT METRIC DATA UPDATE IN&nbsp;
+                                    <strong>
+                                        <span id="tick">-&nbsp;-</span>
+                                    </strong>&nbsp;SECONDS
+                                </p>
+                                <div id="charts">
+                                    <div id="times-container">
+                                        <div class="chart-box">
+                                            <div class="title">
+                                                <div class="icon"></div>
+                                                <div class="text-wrapper">
+                                                    <div class="main">Average Response Time By Tier</div>
+                                                    <div class="sub">&nbsp;</div>
+                                                </div>
+                                            </div>
+                                            <div class="content">
+                                                <div id="times-chart" class="small-chart chart">
+                                                    <div id="avgResponseChart" style="height: 250px;"></div>
+                                                </div>
+                                            </div>
+                                            <div class="totalMetrics">
+                                                Total Metric API datasets received:&nbsp;
+                                                <span id="avgResponseStatsCount">-&nbsp;-</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div id="cpu-container">
+                                        <div class="chart-box">
+                                            <div class="title">
+                                                <div class="icon"></div>
+                                                <div class="text-wrapper">
+                                                    <div class="main">CPU Usage</div>
+                                                    <div class="sub">&nbsp;</div>
+                                                </div>
+                                            </div>
+                                            <div class="content">
+                                                <div id="cpu-chart" class="small-chart chart">
+                                                    <div id="cpuChart" style="height: 250px;"></div>
+                                                </div>
+                                            </div>
+                                            <div class="totalMetrics">
+                                                Total Metric API datasets received:&nbsp;
+                                                <span id="cpuStatsCount">-&nbsp;-</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="chart-box" id="heap-size-container">
+                                        <div class="title">
+                                            <div class="icon"></div>
+                                            <div class="text-wrapper">
+                                                <div class="main">Heap Size</div>
+                                                <div class="sub">&nbsp;</div>
+                                            </div>
+                                        </div>
+                                        <div class="content">
+                                            <div id="heap-chart" class="small-chart chart">
+                                                <div id="heapChart" style="height: 250px;"></div>
+                                            </div>
+                                        </div>
+                                        <div class="totalMetrics">
+                                            Total Metric API datasets received:&nbsp;
+                                            <span id="heapStatsCount">-&nbsp;-</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="chart-box" id="connections-container">
+                                        <div class="title">
+                                            <div class="icon"></div>
+                                            <div class="text-wrapper">
+                                                <div class="main">Concurrent Connections</div>
+                                                <div class="sub">&nbsp;</div>
+                                            </div>
+                                        </div>
+                                        <div class="content">
+                                            <div id="connections-chart" class="small-chart chart">
+                                                <div id="concurrencyChart" style="height: 250px;"></div>
+                                            </div>
+                                        </div>
+                                        <div class="totalMetrics">
+                                            Total Metric API datasets received:&nbsp;
+                                            <span id="concurrencyStatsCount">-&nbsp;-</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="chart-box" id="event-loop-container">
+                                        <div class="title">
+                                            <div class="icon"></div>
+                                            <div class="text-wrapper">
+                                                <div class="main">Event Loop</div>
+                                                <div class="sub">&nbsp;</div>
+                                            </div>
+                                        </div>
+                                        <div class="content">
+                                            <div id="queue-block-chart" class="small-chart chart">
+                                                <div id="eventLoopChart" style="height: 250px;"></div>
+                                            </div>
+                                        </div>
+                                        <div class="totalMetrics">
+                                            Total Metric API datasets received:&nbsp;
+                                            <span id="eventLoopStatsCount">-&nbsp;-</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="chart-box" id="mq-container">
+                                        <div class="title">
+                                            <div class="icon"></div>
+                                            <div class="text-wrapper">
+                                                <div class="main">Messages</div>
+                                                <div class="sub">&nbsp;</div>
+                                            </div>
+                                        </div>
+                                        <div class="content">
+                                            <div id="mq-chart" class="small-chart chart">
+                                                <div id="messageChart" style="height: 250px;"></div>
+                                            </div>
+                                        </div>
+                                        <div class="totalMetrics">
+                                            Total Metric API datasets received:&nbsp;
+                                            <span id="messageStatsCount">-&nbsp;-</span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- container -->
+    </div>
+    <!-- content -->
+
+    <div class="footer-container">
+        <div class="container">
+            <div class="row-fluid">
+                <div class="span12 footer">
+                    <div class="company-name">
+                        ©
+                        <span id="cr-year">2014</span>
+                        - <a href="http://www.strongloop.com">StrongLoop, Inc</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    $.urlParam = function(name) {
+        var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+        if (results == null) {
+            return null;
+        } else {
+            return results[1] || 0;
+        }
+    }
+
+    var MAX_NUM_STATS = 20;
+
+    var startTime;
+
+    var avgResponseStatsCount = 0;
+    var cpuStatsCount = 0;
+    var heapStatsCount = 0;
+    var concurrencyStatsCount = 0;
+    var eventLoopStatsCount = 0;
+    var messageStatsCount = 0;
+
+    var avgResponseStats = [];
+    var cpuStats = [];
+    var heapStats = [];
+    var concurrencyStats = [];
+    var eventLoopStats = [];
+    var messageStats = [];
+
+    function printHoverTip(index, options, content, row) {
+        var tip;
+
+        var d = new Date(row.time);
+        //var when = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+        var when = d.toLocaleTimeString();
+
+        tip = "<div class='morris-hover-row-label'>" + when + "</div>";
+
+        for (var i = 0; i < options.labels.length; i++) {
+            tip += "<div class='morris-hover-point' style='color:" + options.lineColors[i] + "'>" +
+                options.ykeys[i] + ": " + row[options.ykeys[i]] + "</div>";
+        }
+
+        tip += "<div class='morris-hover-point'>[pid:" + row.worker + "]</div>";
+
+        return tip;
+    }
+
+    var avgResponseChart = new Morris.Line({
+        element: 'avgResponseChart',
+        data: cpuStats,
+        xkey: 'time',
+        ykeys: ['tiers.http.average'],
+        labels: ['tiers.http.average'],
+        fillOpacity: 0.5,
+        resize: true,
+        hoverCallback: printHoverTip
+    });
+
+    var cpuChart = new Morris.Area({
+        element: 'cpuChart',
+        data: cpuStats,
+        xkey: 'time',
+        ykeys: ['cpu.total', 'cpu.user', 'cpu.system'],
+        labels: ['cpu.total', 'cpu.user', 'cpu.system'],
+        fillOpacity: 0.5,
+        resize: true,
+        behaveLikeLine: false,
+        hoverCallback: printHoverTip
+    });
+
+    var heapChart = new Morris.Area({
+        element: 'heapChart',
+        data: cpuStats,
+        xkey: 'time',
+        ykeys: ['gc.heap.used', 'heap.total', 'heap.used'],
+        labels: ['gc.heap.used', 'heap.total', 'heap.used'],
+        fillOpacity: 0.5,
+        resize: true,
+        behaveLikeLine: false,
+        hoverCallback: printHoverTip
+    });
+
+    var concurrencyChart = new Morris.Line({
+        element: 'concurrencyChart',
+        data: cpuStats,
+        xkey: 'time',
+        ykeys: ['http.connections'],
+        labels: ['http.connections'],
+        fillOpacity: 0.5,
+        resize: true,
+        behaveLikeLine: true,
+        hoverCallback: printHoverTip
+    });
+
+    var eventLoopChart = new Morris.Line({
+        element: 'eventLoopChart',
+        data: cpuStats,
+        xkey: 'time',
+        ykeys: ['loop.count', 'loop.minimum', 'loop.maximum', 'loop.average'],
+        labels: ['loop.count', 'loop.minimum', 'loop.maximum', 'loop.average'],
+        fillOpacity: 0.5,
+        resize: true,
+        hoverCallback: printHoverTip
+    });
+
+    var messageChart = new Morris.Line({
+        element: 'messageChart',
+        data: cpuStats,
+        xkey: 'time',
+        ykeys: ['messages.in.count', 'messages.out.count'],
+        labels: ['messages.in.count', 'messages.out.count'],
+        fillOpacity: 0.5,
+        resize: true,
+        hoverCallback: printHoverTip
+    });
+
+    var connectPid = $.urlParam('pid');
+    var stats = io.connect('http://localhost/stats-' + connectPid);
+
+    stats.on('connect', function() {
+        startTime = new Date();
+
+        console.log("Connected to /stats-" + connectPid);
+    });
+
+    stats.on('welcome', function(data) {
+        console.log(data);
+    });
+
+    stats.on('tick', function(data) {
+        $('#tick').text(data);
+    });
+
+    stats.on('avgResponseStats', function(data) {
+        console.log("AVG RESPONSE STATS: ", data);
+
+        avgResponseStats.push(data);
+
+        if (avgResponseStats.length > MAX_NUM_STATS) {
+            avgResponseStats.shift();
+        }
+
+        avgResponseChart.setData(avgResponseStats);
+
+        $('#avgResponseStatsCount').text(++avgResponseStatsCount);
+    });
+
+    stats.on('cpuStats', function(data) {
+        console.log("CPU STATS: ", data);
+
+        cpuStats.push(data);
+
+        if (cpuStats.length > MAX_NUM_STATS) {
+            cpuStats.shift();
+        }
+
+        cpuChart.setData(cpuStats);
+
+        $('#cpuStatsCount').text(++cpuStatsCount);
+    });
+
+    stats.on('heapStats', function(data) {
+        console.log("HEAP STATS: ", data);
+
+        heapStats.push(data);
+
+        if (heapStats.length > MAX_NUM_STATS) {
+            heapStats.shift();
+        }
+
+        heapChart.setData(heapStats);
+
+        $('#heapStatsCount').text(++heapStatsCount);
+    });
+
+    stats.on('concurrencyStats', function(data) {
+        console.log("CONCURRENCY STATS: ", data);
+
+        concurrencyStats.push(data);
+
+        if (concurrencyStats.length > MAX_NUM_STATS) {
+            concurrencyStats.shift();
+        }
+
+        concurrencyChart.setData(concurrencyStats);
+
+        $('#concurrencyStatsCount').text(++concurrencyStatsCount);
+    });
+
+    stats.on('eventLoopStats', function(data) {
+        console.log("EVENT LOOP STATS: ", data);
+
+        eventLoopStats.push(data);
+
+        if (eventLoopStats.length > MAX_NUM_STATS) {
+            eventLoopStats.shift();
+        }
+
+        eventLoopChart.setData(eventLoopStats);
+
+        $('#eventLoopStatsCount').text(++eventLoopStatsCount);
+    });
+
+    stats.on('messageStats', function(data) {
+        console.log("MESSAGE STATS: ", data);
+
+        messageStats.push(data);
+
+        if (messageStats.length > MAX_NUM_STATS) {
+            messageStats.shift();
+        }
+
+        messageChart.setData(messageStats);
+
+        $('#messageStatsCount').text(++messageStatsCount);
+    });
+    </script>
+</body>
+
+</html>

@@ -60,6 +60,7 @@ try {
   app.use('/explorer', explorer);
   app.once('started', function(baseUrl) {
     console.log('Browse your REST API at %s%s', baseUrl, explorer.route);
+    console.log('Strong-Agent Metric API Demo @ %s/metrics/#?pid=%s', baseUrl, process.pid);
   });
 } catch(e){
   console.log(
@@ -148,5 +149,5 @@ app.start = function() {
 };
 
 if(require.main === module) {
-  app.start();
+   var strongAgent = require('./util/StrongAgentMetricAPIDemo')(app.start());
 }

@@ -19,6 +19,8 @@
     "mongodb": "^1.4.7",
     "request": "^2.36.0",
     "shuffle": "^0.2.1",
+    "socket.io": "^1.0.6",
+    "strong-agent": "^0.4.11",
     "text-table": "^0.2.0",
     "weighted": "^0.2.2"
   },
@@ -26,5 +28,21 @@
   "description": "LoopBack Sample App based upon LoopBack 1.x scaffolding",
   "devDependencies": {},
   "author": "Dennis Ashby (StrongLoop)",
-  "license": "ISC"
+  "license": "ISC",
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dashby3000/loopback-icars-training-app.git"
+  },
+  "keywords": [
+    "StrongLoop",
+    "LoopBack",
+    "Strong-Agent"
+  ],
+  "bugs": {
+    "url": "https://github.com/dashby3000/loopback-icars-training-app/issues"
+  },
+  "homepage": "https://github.com/dashby3000/loopback-icars-training-app"
 }
